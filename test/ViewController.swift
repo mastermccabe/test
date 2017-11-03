@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     var isTimerRunning: Bool = false
     var seconds = 1
     var time = 0
-    var maximum: Double = 0
+    var maximum: Int = 0
     weak var timer: Timer?
     var startTime: Double = 0
     var elapsed: Double = 0
@@ -24,59 +24,49 @@ class ViewController: UIViewController {
     var dummyTimer = Timer()
     
     @IBAction func startButtonPressed(_ sender: UIButton) {
-        isTimerRunning = true
-//        startTime = Date().timeIntervalSinceReferenceDate - elapsed
-//        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true){
-//            timer in
-//
-//            self.time += 1
-//
-//            print(self.time)
-//        }
-        
+        start()
         print ("start button pressed")
-        status = true
+        
     }
     
+    
+    
     func start(){
+       
         print("start function initiated")
-        startTime = Date().timeIntervalSinceReferenceDate - elapsed
+        elapsed = 0
+        self.time = 0
+        startTime = Date().timeIntervalSinceReferenceDate
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true){
         timer in
         
         self.time += 1
-        
-//        print(self.time)
+        self.height.text = String(self.time)
+        print(self.time)
+            
         }
     }
     func stop(){
-         elapsed = round(Date().timeIntervalSinceReferenceDate - startTime)*100/10000
+//        elapsed = Date().timeIntervalSinceReferenceDate - startTime
 //        elapsed = round(Date().timeIntervalSinceReferenceDate - startTime)*100/100
-//        print ("elapsed",elapsed)
-        if (elapsed > maximum){
-            maximum = elapsed
+        
+        print ("elapsed",self.time)
+        if (self.time > maximum){
+            maximum = self.time
         }
         max.text = String(maximum)
         print(maximum)
-        height.text = String(elapsed)
+//        height.text = String(elapsed)
         timer?.invalidate()
-        isTimerRunning = true
-        elapsed = 0
-        startTime = 0
         
+       
     }
     
     @IBAction func stopButtonPressed(_ sender: UIButton) {
-        isTimerRunning = false
+//        isTimerRunning = false
         stop()
+
         
-//
-//        elapsed = (Date().timeIntervalSinceReferenceDate - startTime)*1000
-//        print (elapsed)
-//
-//        height.text = String(elapsed)
-//        timer?.invalidate()
-        status = false
     }
     
     
@@ -90,6 +80,14 @@ class ViewController: UIViewController {
         
         motionManager = CMMotionManager()
         
+       
+        
+        
+  
+        
+            
+            
+            
         var total : Double = 0
         if let manager = motionManager{
             print("we have motion manager")
@@ -106,20 +104,28 @@ class ViewController: UIViewController {
 //                          print ("y gravity:", mydata.gravity.y)
 //                          print ("z gravity:", mydata.gravity.z)
 //                        total = (abs(mydata.gravity.x) + abs(mydata.gravity.y) + abs(mydata.gravity.z))
-                        total = mydata.gravity.x + mydata.gravity.y + mydata.gravity.z
+                        total = abs(mydata.gravity.x + mydata.gravity.y + mydata.gravity.z)
                            print ("total: ",total)
-                        if (total > -1.1){
-                            print("IN AIR")
-                            self.start()
-                            self.status = true
-                            self.isTimerRunning = true
-                           
-                        }
-                        else if (self.status == true){
-                            self.stop()
+                        if (total > 0.6){
                             self.status = false
-                            print("stopping line 114")
+                        }
+                        else{
+                            self.status = true
+                        }
+                        if(self.status == false){
+                            print("status",self.status)
                             
+                            self.status = true
+                             print("status",self.status)
+                            
+                            self.start()
+
+                        }
+                        if (self.status == true){
+                            
+                            self.status = false
+                            
+                            self.stop()
                         }
                         
                     }
